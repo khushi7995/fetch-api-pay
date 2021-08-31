@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div>
+        <h1>Get To do Tasks for User</h1>
+        <input type="text" name="username" id="usernameField" required maxlength="45">
+        <button id="fetchUserDataBtn">Fetch User Data</button>
+        <button id="fetchUsertodosbtn">Fetch User Todos</button>
+
+    </div>
+    <hr>
+    <div id="totalTask">
+        <div id="totalOpenJobs">
+            <h4>Total open jobs:</h4>
+            <h5 id="numberOfOpenJob"></h5>
+        </div>
+        <div id="totalCompletedJobs">
+            <h4>Total Completed jobs:</h4>
+            <h5 id="numberOfCompletedJob"> </h5>
+        </div>
+
+    </div>
+    <div id="response"></div>
+    <script>
+        let name = document.getElementById('usernameField').value;
+        let totalcompletedJobs = 0;
+        let totalOpenJobs = 0;
+        console.log(name);
+        debugger;
+        document.getElementById('fetchUserDataBtn').addEventListener('click', fetchUserDatas);
+        document.getElementById('fetchUsertodosbtn').addEventListener('click', fetchUserTodos);
+
+        function fetchUserDatas() {
+            fetch('https://jsonplaceholder.typicode.com/users/')
+
+                .then(response => response.json())
+                .then(users => {
+                    let output = '<h2>Lists of Users</h2>';
+                    output += '<ul>';
+                    users.forEach(function (user) {
+                        if (document.getElementById('usernameField').value == user.name) {
+                            fetchUserTodos(user.id);
+                        }
+
+                    });
+
+                    output += '</ul>'
+                    document.getElementById("response").innerHTML = output;
+
+                });
+
+        }
+        function fetchUserTodos(id) {
+            fetch('https://jsonplaceholder.typicode.com/todos/')
+                .then(response => response.json())
+                .then(users => {
+                    let output = '<h2>Lists of Todos</h2>';
+                    output += '<ul>';
+                    console.log(users);
+                    users.forEach(function (user) {
+                        if (id == user.userId) {
+                            if (user.completed) {
+                                totalOpenJobs++;
+                            }
+                            else {
+                                totalcompletedJobs++;
+                            }
+
+                        }
+                        if (id == user.userId && user.completed == false) {
+
+                            output += `
+                        <li> Total Jobs: ${user.completed}</li>
+                        <li>UserID:
+                            ${user.userId}
+                        </li>
+                        <li>ID:
+                            ${user.id}
+                        </li>
+                        <li>Title:
+                            ${user.title}
+                        </li>
+                        <li>Completed:
+                            ${user.completed}
+                        </li>
+                        <br>
+
+                        </br>
+                    `;
+
+                        }
+                    });
+                    document.getElementById("numberOfOpenJob").innerHTML = totalOpenJobs;
+                    document.getElementById("numberOfCompletedJob").innerHTML = totalcompletedJobs;
+
+                    output += '</ul>'
+                    document.getElementById("response").innerHTML = output;
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>
